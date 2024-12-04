@@ -1,0 +1,156 @@
+# Node class or Link class
+class Link(object):
+    # insert data and (reference or next or pointer)
+    def _init_(self, datum, next=None):
+        self.__data= datum
+        self.__next= next
+    
+    # return data inside the current link
+    def getData(self):
+        return self.__data
+    
+    # change the current data of the link
+    def setData(self, datum):
+        self.__data =  datum
+    
+    # return the next link in the chain
+    def getNext(self):
+        return self.__next
+    
+    # Change the next link to a new link
+    def setNext(self, link):
+        if link is None or isinstance(link, Link):
+            self.__next = link
+        else:
+            raise Exception("Next link must be None or a Link")
+        
+    # Tests whether it is the last link in the list
+    def isLast(self):
+        return self.getNext() is None  # True if and Only if no next Link
+
+    # Make a string representation of link
+    def _str_(self):
+        return str(self.getData())
+    
+###################################### 
+
+# Linked List of data items (Links)
+class LinkedList(object):
+    # constructor to create list   
+    def _init_(self):
+        self.__first = None # Reference for the first Link or node
+
+    # return the first link
+    def getFirst(self):
+        return self.__first
+    
+    # Change the firsts link ro a new link
+    def setFirst(self, link):
+        if link is None or isinstance(link, Link):
+            self.__first = link
+        else:
+            raise Exception('First Link must be None or a link')
+
+    def getNext(self):
+        return self.getFirst() # First link is the next
+    
+       # First link is the new link
+            
+    def isEmpty(self):
+        return self.getFirst() is None # True if and Only if no first Link
+    
+    # Return the first data item in the list
+    def first(self):
+        if self.isEmpty(): 
+            raise Exception('No First item in the list')
+        
+        return self.getFirst().getData()
+        
+    # List Traversal to print all data items
+    def traverse(self):
+        link = self.getFirst()          # Start at the first link
+        while link is not None:         # Move forward until you reach the end of the list
+            print(link.getData())       # Apply the function to the item
+            link = link.getNext()       # Move to the next link
+
+    # get Length of the list
+    def _len_(self):  
+        l = 0                           # start with counter = 0
+        link = self.getFirst()          # Start at tthe first link
+        while link is not None:         # Geep Going until no more links
+            l += 1                      # increase counter
+            link = link.getNext()       # Move to the next link
+
+        return l
+    
+    # Build a string representation of the list
+    def _str_(self):
+        result = '['                    # Enclose list in square brackets
+        link = self.getFirst()
+        while link is not None:
+            if len(result) > 1:         # After first link
+                result += '>'           # Seperate links with arrows
+
+            result += str(link)         # Append string version of the link
+            link = link.getNext()       # Move forward
+
+        return result + ']'             # close with a square bracket             
+
+    # Insert at the Start of the list    
+    def insert(self, datum):
+        link = Link(datum, self.getFirst())     # Create a new link that contains the datum
+                                                # make its next the rest of the list
+        self.setFirst(link)                     # Update list so that the first item is the new link
+    
+    # Find the first link whose key matches the goal
+    def find(self, goal):        
+        link = self.getFirst()           # Start at the first link
+        while link is not None:          # Search until the end of the list
+            if link.getData()== goal:    # Does this link matches?
+                return link              # If so, return the link
+            link = link.getNext()        # else, move forward to the next link
+
+    # Find first item whose key matches the goal
+    def search(self, goal):
+        link = self.find(goal)             # look for link object that matches
+        if link is not None:               # If found
+            return link.getData()          # return its datum
+    
+
+    # Insert a new datum after the first
+    def insertAfter(self,goal, newDatum):
+        link = self.find(goal)             # find a matching link object
+        if link is None:
+            return False                        # Not Found
+        
+        newLink = Link(newDatum, link.getNext())    # Create a new link node 
+                                                    # with the new datum and reminder of the list
+        link.setNext(newLink)               # insert after matching link
+        return True
+    
+    # Delete First Link
+    def deleteFirst(self):
+        if self.isEmpty():
+            raise Exception('Cannot delete first of Empty list')
+        first = self.getFirst()                 # get first link
+        self.setFirst(first.getNext())          # Remove first link of the list 
+        return first.getData()                  
+    
+    # Delete the first link from the list whose key matches the goal
+    def delete(self, goal):
+        if self.isEmpty():
+            raise Exception('Cannot delete from an Empty list')
+        
+        previous = self # link before link to be deleted
+        while previous.getNext() is not None:
+            link = previous.getNext()           # next link after previous
+            if goal == link.getData():     # if next link matches
+                previous.setNext(link.getNext())    # Change the previous's link to link's next
+                return link.getData()
+            previous = link                     # Advance previous to next link
+
+        # since loop ends without finding a match raise an Exception
+        raise Exception('No item with a matching key found in the list')
+    # change the next of node
+    def setNext(self, link):
+        self.setFirst(link)
